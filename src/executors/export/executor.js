@@ -27,7 +27,7 @@ exports.default = runExecutor;
 const child_process_1 = require("child_process");
 const path = __importStar(require("path"));
 const devkit_1 = require("@nx/devkit");
-async function runExecutor({ dryRun }, context) {
+async function runExecutor({ dryRun, gitRepo, modules }, context) {
     if (dryRun) {
         if (context.isVerbose)
             devkit_1.logger.info("Not running 'buf export' because the 'dryRun' flag is set.");
@@ -36,11 +36,11 @@ async function runExecutor({ dryRun }, context) {
     try {
         const protoRoot = path.join(context.root, context.projectGraph.nodes[context.projectName]?.data.root);
         // Set the current working directory to the root directory of the source project
-        const cwd = path.join(context.root, protoRoot);
-        // Run the 'buf generate' command in the current working directory
+        let command = `npx buf export ` + gitRepo + ` -o ` + protoRoot + ` --path ` + modules.join(',');
+        // Run the 'buf export' command in the current working directory
         if (context.isVerbose)
-            devkit_1.logger.info(`running 'buf export' on ${cwd}...`);
-        await new Promise((resolve, reject) => (0, child_process_1.exec)(`npx buf export`, { cwd }, (error, stdout, stderr) => {
+            devkit_1.logger.info(`running '${command}' ...`);
+        await new Promise((resolve, reject) => (0, child_process_1.exec)(command, {}, (error, stdout, stderr) => {
             if (error) {
                 devkit_1.logger.error(stdout);
                 devkit_1.logger.error(stderr);

@@ -4,7 +4,7 @@ import { ExecutorContext, logger } from "@nx/devkit";
 import { ExportExecutorSchema } from "./schema";
 
 export default async function runExecutor(
-  { dryRun, gitRepo, exportTo, modules }: ExportExecutorSchema,
+  { dryRun, gitRepo, modules }: ExportExecutorSchema,
   context: ExecutorContext
 ) {
   if (dryRun) {

@@ -39,7 +39,7 @@ const plugin = {
         }
         const deps = [];
         for (const [project, config] of Object.entries(projectMap)) {
-            const bufTask = Object.values(config.targets ?? {}).find((target) => target.executor === "@gorilainvest/nx-buf:generate");
+            const bufTask = Object.values(config.targets ?? {}).find((target) => target.executor === "@clsx524/nx-buf:generate");
             if (!bufTask?.options)
                 continue;
             const projectJsonPath = path.join(config.root, "project.json");
