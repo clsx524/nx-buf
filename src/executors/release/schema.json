@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
   "version": 2,
-  "title": "Export executor",
+  "title": "Release executor",
   "description": "",
   "type": "object",
   "properties": {
@@ -13,14 +13,14 @@
       "type": "string",
       "description": "the remote repository"
     },
-    "exportTo": {
+    "exportFrom": {
       "type": "string",
-      "description": "the protobuf file root directory"
+      "description": "the nx project root directory"
     },
-    "modules": {
-      "type": "array",
-      "description": "the modules to import from remote repository"
+    "protoDir": {
+      "type": "string",
+      "description": "the root of the protobuf files"
     }
   },
-  "required": ["gitRepo", "exportTo", "modules"]
+  "required": ["gitRepo", "exportFrom", "protoDir"]
 }

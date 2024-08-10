@@ -19,6 +19,11 @@
       "implementation": "./src/executors/export/executor",
       "schema": "./src/executors/export/schema.json",
       "description": "Runs buf export."
+    },
+    "release": {
+      "implementation": "./src/executors/release/executor",
+      "schema": "./src/executors/release/schema.json",
+      "description": "Release protobuf files to remote git so that other repos can consume"
     }
   }
 }

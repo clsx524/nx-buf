@@ -1,6 +1,6 @@
 {
   "name": "@clsx524/nx-buf",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "type": "commonjs",
   "main": "./src/index.js",
   "executors": "./executors.json",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@bufbuild/buf": "^1.36.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "simple-git": "^3.25.0"
   }
 }

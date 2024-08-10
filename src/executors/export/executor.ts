@@ -4,7 +4,7 @@ import { ExecutorContext, logger } from "@nx/devkit";
 import { ExportExecutorSchema } from "./schema";
 
 export default async function runExecutor(
-  { dryRun, gitRepo, modules }: ExportExecutorSchema,
+  { dryRun, gitRepo, exportTo, modules }: ExportExecutorSchema,
   context: ExecutorContext
 ) {
   if (dryRun) {
@@ -13,13 +13,8 @@ export default async function runExecutor(
     return { success: true };
   }
   try {
-    const protoRoot = path.join(
-      context.root,
-      <string>context.projectGraph!.nodes[context.projectName!]?.data.root
-    );
-
     // Set the current working directory to the root directory of the source project
-    let command = `npx buf export ` + gitRepo +  ` -o ` + protoRoot + ` --path ` + modules.join(',');
+    let command = `npx buf export ` + gitRepo +  ` -o ` + exportTo + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
     if (context.isVerbose) logger.info(`running '${command}' ...`);
