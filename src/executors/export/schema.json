@@ -8,7 +8,15 @@
     "dryRun": {
       "type": "boolean",
       "description": "If true, the executor will not actually push the changes to the remote repository."
+    },
+    "gitRepo": {
+      "type": "string",
+      "description": "the remote repository"
+    },
+    "modules": {
+      "type": "array",
+      "description": "the modules to import from remote repository"
     }
   },
-  "required": []
+  "required": ["gitRepo", "modules"]
 }

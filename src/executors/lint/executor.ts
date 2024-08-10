@@ -10,7 +10,7 @@ export default async function runExecutor(
   try {
     const cwd = path.join(
       context.root,
-      context.projectGraph!.nodes[context.projectName!]?.data.root
+      <string>context.projectGraph!.nodes[context.projectName!]?.data.root
     );
 
     // Build the 'buf lint' command to be run

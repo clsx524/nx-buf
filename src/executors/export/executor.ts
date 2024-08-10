@@ -15,17 +15,16 @@ export default async function runExecutor(
   try {
     const protoRoot = path.join(
       context.root,
-      context.projectGraph!.nodes[context.projectName!]?.data.root
+      <string>context.projectGraph!.nodes[context.projectName!]?.data.root
     );
 
     // Set the current working directory to the root directory of the source project
-    let command = `npx buf export ` + gitRepo;
-    let cwd = '-o ' + exportTo + ' --path ' + modules.join(',');
+    let command = `npx buf export ` + gitRepo +  ` -o ` + protoRoot + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
-    if (context.isVerbose) logger.info(`running '${command}' on ${cwd}...`);
+    if (context.isVerbose) logger.info(`running '${command}' ...`);
     await new Promise<void>((resolve, reject) =>
-        exec(command, { cwd }, (error, stdout, stderr) => {
+        exec(command, {}, (error, stdout, stderr) => {
           if (error) {
             logger.error(stdout);
             logger.error(stderr);

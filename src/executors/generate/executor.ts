@@ -16,11 +16,11 @@ export default async function runExecutor(
         `Root directory of source project "${srcProject}" not found.`
       );
     const protoRoot = path.join(
-      context.projectGraph!.nodes[srcProject]?.data.root
+      <string>context.projectGraph!.nodes[srcProject]?.data.root
     );
     const targetProjectRoot = path.join(
       context.root,
-      context.projectGraph!.nodes[context.projectName!]?.data.root
+      <string>context.projectGraph!.nodes[context.projectName!]?.data.root
     );
 
     // Set the current working directory to the root directory of the source project
