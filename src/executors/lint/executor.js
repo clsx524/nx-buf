@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = runExecutor;
 const child_process_1 = require("child_process");
 const devkit_1 = require("@nx/devkit");
 const path = __importStar(require("path"));
@@ -50,4 +51,3 @@ async function runExecutor({ options }, context) {
         return { success: false, error };
     }
 }
-exports.default = runExecutor;

@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = runExecutor;
 const child_process_1 = require("child_process");
 const promises_1 = require("fs/promises");
 const path = __importStar(require("path"));
@@ -79,4 +80,3 @@ async function runExecutor({ srcProject, copyFrom, copyTo, options }, context) {
         return { success: false, error };
     }
 }
-exports.default = runExecutor;

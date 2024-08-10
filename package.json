@@ -1,5 +1,5 @@
 {
-  "name": "@gorilainvest/nx-buf",
+  "name": "@clsx524/nx-buf",
   "version": "1.0.0",
   "type": "commonjs",
   "main": "./src/index.js",
@@ -9,14 +9,14 @@
   },
   "devDependencies": {
     "@types/node": "^20.7.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@nx/devkit": "^17.1.2",
-    "nx": "^17.1.2"
+    "@nx/devkit": "^19.5.7",
+    "nx": "^19.5.7"
   },
   "dependencies": {
-    "@bufbuild/buf": "^1.26.1",
-    "glob": "^10.3.9"
+    "@bufbuild/buf": "^1.36.0",
+    "glob": "^11.0.0"
   }
 }

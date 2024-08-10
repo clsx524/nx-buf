@@ -30,7 +30,7 @@ const devkit_1 = require("@nx/devkit");
 async function runExecutor({ dryRun }, context) {
     if (dryRun) {
         if (context.isVerbose)
-            devkit_1.logger.info("Not running 'buf push' because the 'dryRun' flag is set.");
+            devkit_1.logger.info("Not running 'buf export' because the 'dryRun' flag is set.");
         return { success: true };
     }
     try {
@@ -39,8 +39,8 @@ async function runExecutor({ dryRun }, context) {
         const cwd = path.join(context.root, protoRoot);
         // Run the 'buf generate' command in the current working directory
         if (context.isVerbose)
-            devkit_1.logger.info(`running 'buf push' on ${cwd}...`);
-        await new Promise((resolve, reject) => (0, child_process_1.exec)(`npx buf push`, { cwd }, (error, stdout, stderr) => {
+            devkit_1.logger.info(`running 'buf export' on ${cwd}...`);
+        await new Promise((resolve, reject) => (0, child_process_1.exec)(`npx buf export`, { cwd }, (error, stdout, stderr) => {
             if (error) {
                 devkit_1.logger.error(stdout);
                 devkit_1.logger.error(stderr);

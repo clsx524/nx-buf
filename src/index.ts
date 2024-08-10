@@ -41,7 +41,7 @@ const plugin: NxPluginV2 = {
     const deps: RawProjectGraphDependency[] = [];
     for (const [project, config] of Object.entries(projectMap)) {
       const bufTask = Object.values(config.targets ?? {}).find(
-        (target) => target.executor === "@gorilainvest/nx-buf:generate"
+        (target) => target.executor === "@clsx524/nx-buf:generate"
       ) as TargetConfiguration<GenerateExecutorSchema> | undefined;
       if (!bufTask?.options) continue;
 

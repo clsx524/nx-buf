@@ -14,6 +14,11 @@
       "implementation": "./src/executors/push/executor",
       "schema": "./src/executors/push/schema.json",
       "description": "Runs buf push."
+    },
+    "export": {
+      "implementation": "./src/executors/export/executor",
+      "schema": "./src/executors/export/schema.json",
+      "description": "Runs buf export."
     }
   }
 }
