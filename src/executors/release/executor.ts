@@ -41,14 +41,21 @@ export default async function runExecutor(
           .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
           .checkoutLocalBranch(currentBranchName.current);
 
-    const outputDir = path.join(remoteRepoLocalDir, targetDir);
     // Set the current working directory to the root directory of the source project
+    const protoRoot = path.join(
+        context.root,
+        <string>context.projectGraph!.nodes[context.projectName!]?.data.root
+    );
+
+    // Set the current working directory to the root directory of the source project
+    const cwd = path.join(context.root, protoRoot);
+    const outputDir = path.join(remoteRepoLocalDir, targetDir);
     let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
     if (context.isVerbose) logger.info(`running '${command}' ...`);
     await new Promise<void>((resolve, reject) =>
-        exec(command, {}, (error, stdout, stderr) => {
+        exec(command, { cwd }, (error, stdout, stderr) => {
           if (error) {
             logger.error(stdout);
             logger.error(stderr);

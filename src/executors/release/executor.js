@@ -58,13 +58,16 @@ async function runExecutor({ dryRun, gitRepo, exportFrom, modules, targetDir }, 
             await (0, simple_git_1.simpleGit)()
                 .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
                 .checkoutLocalBranch(currentBranchName.current);
-        const outputDir = path.join(remoteRepoLocalDir, targetDir);
         // Set the current working directory to the root directory of the source project
+        const protoRoot = path.join(context.root, context.projectGraph.nodes[context.projectName]?.data.root);
+        // Set the current working directory to the root directory of the source project
+        const cwd = path.join(context.root, protoRoot);
+        const outputDir = path.join(remoteRepoLocalDir, targetDir);
         let command = `npx buf export ` + exportFrom + ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
         // Run the 'buf export' command in the current working directory
         if (context.isVerbose)
             devkit_1.logger.info(`running '${command}' ...`);
-        await new Promise((resolve, reject) => (0, child_process_1.exec)(command, {}, (error, stdout, stderr) => {
+        await new Promise((resolve, reject) => (0, child_process_1.exec)(command, { cwd }, (error, stdout, stderr) => {
             if (error) {
                 devkit_1.logger.error(stdout);
                 devkit_1.logger.error(stderr);
