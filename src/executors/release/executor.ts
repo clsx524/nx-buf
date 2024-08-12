@@ -42,13 +42,11 @@ export default async function runExecutor(
           .checkoutLocalBranch(currentBranchName.current);
 
     // Set the current working directory to the root directory of the source project
-    const protoRoot = path.join(
+    const cwd = path.join(
         context.root,
         <string>context.projectGraph!.nodes[context.projectName!]?.data.root
     );
 
-    // Set the current working directory to the root directory of the source project
-    const cwd = path.join(context.root, protoRoot);
     const outputDir = path.join(remoteRepoLocalDir, targetDir);
     let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
 

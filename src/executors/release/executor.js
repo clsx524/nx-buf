@@ -59,9 +59,7 @@ async function runExecutor({ dryRun, gitRepo, exportFrom, modules, targetDir }, 
                 .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
                 .checkoutLocalBranch(currentBranchName.current);
         // Set the current working directory to the root directory of the source project
-        const protoRoot = path.join(context.root, context.projectGraph.nodes[context.projectName]?.data.root);
-        // Set the current working directory to the root directory of the source project
-        const cwd = path.join(context.root, protoRoot);
+        const cwd = path.join(context.root, context.projectGraph.nodes[context.projectName]?.data.root);
         const outputDir = path.join(remoteRepoLocalDir, targetDir);
         let command = `npx buf export ` + exportFrom + ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
         // Run the 'buf export' command in the current working directory
