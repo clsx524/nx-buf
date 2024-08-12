@@ -5,7 +5,7 @@ import { ReleaseExecutorSchema } from "./schema";
 import { simpleGit } from 'simple-git';
 
 export default async function runExecutor(
-  { dryRun, gitRepo, exportFrom, protoDir }: ReleaseExecutorSchema,
+  { dryRun, gitRepo, exportFrom, modules }: ReleaseExecutorSchema,
   context: ExecutorContext
 ) {
   if (dryRun) {
@@ -25,10 +25,8 @@ export default async function runExecutor(
         .fetch()
         .checkoutLocalBranch(currentBranchName.current);
 
-    const targetPath = path.join(protoDir, context.projectName!);
-
     // Set the current working directory to the root directory of the source project
-    let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + remoteRepoLocalDir + ` --path ` + targetPath;
+    let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + remoteRepoLocalDir + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
     if (context.isVerbose) logger.info(`running '${command}' ...`);
@@ -46,7 +44,7 @@ export default async function runExecutor(
 
     await simpleGit()
         .cwd({ path: '/tmp/' + remoteRepoLocalDir, root:false })
-        .add(targetPath)
+        .add(modules)
         .commit('update protobuf files at ' + new Date().toLocaleString())
         .push(['origin', currentBranchName.current]);
 

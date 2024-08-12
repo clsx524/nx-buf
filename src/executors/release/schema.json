@@ -17,10 +17,10 @@
       "type": "string",
       "description": "the nx project root directory"
     },
-    "protoDir": {
-      "type": "string",
-      "description": "the root of the protobuf files"
+    "modules": {
+      "type": "array",
+      "description": "the list of modules to release to remote protobuf git repo"
     }
   },
-  "required": ["gitRepo", "exportFrom", "protoDir"]
+  "required": ["gitRepo", "exportFrom", "modules"]
 }
