@@ -1,6 +1,6 @@
 {
   "name": "@clsx524/nx-buf",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "type": "commonjs",
   "main": "./src/index.js",
   "executors": "./executors.json",

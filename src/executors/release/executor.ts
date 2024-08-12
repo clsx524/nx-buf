@@ -14,14 +14,14 @@ export default async function runExecutor(
     return { success: true };
   }
   try {
-    const currentBranchName = await simpleGit().branch(['--show-current']);
-
+    const currentBranchName = await simpleGit().branchLocal();
+    console.info(`release under current branch ` + currentBranchName.current);
     const remoteRepoLocalDir = 'tmp-remote-git-buf-repo';
     await simpleGit()
-        .cwd({ path: '/tmp', root:false })
+        .cwd({ path: '/tmp', root: false })
         .clone(gitRepo, remoteRepoLocalDir)
-        .cwd({ path:'/tmp/' + remoteRepoLocalDir, root:false })
-        .deleteLocalBranch(currentBranchName.current)
+        .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
+        .branch(['-D', currentBranchName.current, '&>/dev/null'])
         .fetch()
         .checkoutLocalBranch(currentBranchName.current);
 
