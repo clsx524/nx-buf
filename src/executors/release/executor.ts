@@ -3,9 +3,10 @@ import * as path from "path";
 import { ExecutorContext, logger } from "@nx/devkit";
 import { ReleaseExecutorSchema } from "./schema";
 import { simpleGit } from 'simple-git';
+import * as fs from 'node:fs';
 
 export default async function runExecutor(
-  { dryRun, gitRepo, exportFrom, modules }: ReleaseExecutorSchema,
+  { dryRun, gitRepo, exportFrom, modules, targetDir }: ReleaseExecutorSchema,
   context: ExecutorContext
 ) {
   if (dryRun) {
@@ -17,16 +18,32 @@ export default async function runExecutor(
     const currentBranchName = await simpleGit().branchLocal();
     console.info(`release under current branch ` + currentBranchName.current);
     const remoteRepoLocalDir = 'tmp-remote-git-buf-repo';
-    await simpleGit()
+
+    fs.rm('/tmp/' + remoteRepoLocalDir, { recursive: true, force: true }, err => {
+      if (err) {
+        throw err;
+      }
+    });
+
+    const remoteRepoBranches = await simpleGit()
         .cwd({ path: '/tmp', root: false })
         .clone(gitRepo, remoteRepoLocalDir)
         .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
-        .branch(['-D', currentBranchName.current, '&>/dev/null'])
         .fetch()
-        .checkoutLocalBranch(currentBranchName.current);
+        .branchLocal();
 
+    if (remoteRepoBranches.all.indexOf(currentBranchName.current) > -1)
+      await simpleGit()
+          .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
+          .checkout(currentBranchName.current);
+    else
+      await simpleGit()
+          .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
+          .checkoutLocalBranch(currentBranchName.current);
+
+    const outputDir = path.join(remoteRepoLocalDir, targetDir);
     // Set the current working directory to the root directory of the source project
-    let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + remoteRepoLocalDir + ` --path ` + modules.join(',');
+    let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
     if (context.isVerbose) logger.info(`running '${command}' ...`);
@@ -43,7 +60,7 @@ export default async function runExecutor(
     );
 
     await simpleGit()
-        .cwd({ path: '/tmp/' + remoteRepoLocalDir, root:false })
+        .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
         .add(modules)
         .commit('update protobuf files at ' + new Date().toLocaleString())
         .push(['origin', currentBranchName.current]);

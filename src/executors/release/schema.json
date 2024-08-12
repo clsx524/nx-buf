@@ -20,7 +20,11 @@
     "modules": {
       "type": "array",
       "description": "the list of modules to release to remote protobuf git repo"
+    },
+    "targetDir":  {
+      "type": "string",
+      "description": "the protobuf directory in destination repo"
     }
   },
-  "required": ["gitRepo", "exportFrom", "modules"]
+  "required": ["gitRepo", "exportFrom", "modules", "targetDir"]
 }
