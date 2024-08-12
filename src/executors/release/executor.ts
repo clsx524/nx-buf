@@ -6,7 +6,7 @@ import { simpleGit } from 'simple-git';
 import * as fs from 'node:fs';
 
 export default async function runExecutor(
-  { dryRun, gitRepo, exportFrom, modules, targetDir }: ReleaseExecutorSchema,
+  { dryRun, gitRepo, exportFrom, modules, targetProtoDir, targetRepoName }: ReleaseExecutorSchema,
   context: ExecutorContext
 ) {
   if (dryRun) {
@@ -15,11 +15,10 @@ export default async function runExecutor(
     return { success: true };
   }
   try {
-    const currentBranchName = await simpleGit().branchLocal();
-    console.info(`release under current branch ` + currentBranchName.current);
-    const remoteRepoLocalDir = 'tmp-remote-git-buf-repo';
+    const currentBranch = await simpleGit().branchLocal();
+    console.info(`release under current branch ` + currentBranch.current);
 
-    fs.rm('/tmp/' + remoteRepoLocalDir, { recursive: true, force: true }, err => {
+    fs.rm('/tmp/' + targetRepoName, { recursive: true, force: true }, err => {
       if (err) {
         throw err;
       }
@@ -27,19 +26,19 @@ export default async function runExecutor(
 
     const remoteRepoBranches = await simpleGit()
         .cwd({ path: '/tmp', root: false })
-        .clone(gitRepo, remoteRepoLocalDir)
-        .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
+        .clone(gitRepo, targetRepoName)
+        .cwd({ path: '/tmp/' + targetRepoName, root: false })
         .fetch()
         .branchLocal();
 
-    if (remoteRepoBranches.all.indexOf(currentBranchName.current) > -1)
+    if (remoteRepoBranches.all.indexOf(currentBranch.current) > -1)
       await simpleGit()
-          .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
-          .checkout(currentBranchName.current);
+          .cwd({ path: '/tmp/' + targetRepoName, root: false })
+          .checkout(currentBranch.current);
     else
       await simpleGit()
-          .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
-          .checkoutLocalBranch(currentBranchName.current);
+          .cwd({ path: '/tmp/' + targetRepoName, root: false })
+          .checkoutLocalBranch(currentBranch.current);
 
     // Set the current working directory to the root directory of the source project
     const cwd = path.join(
@@ -47,7 +46,7 @@ export default async function runExecutor(
         <string>context.projectGraph!.nodes[context.projectName!]?.data.root
     );
 
-    const outputDir = path.join(remoteRepoLocalDir, targetDir);
+    const outputDir = path.join(targetRepoName, targetProtoDir);
     let command = `npx buf export ` + exportFrom  +  ` -o ` + '/tmp/' + outputDir + ` --path ` + modules.join(',');
 
     // Run the 'buf export' command in the current working directory
@@ -64,11 +63,28 @@ export default async function runExecutor(
         })
     );
 
+    const changes = await simpleGit()
+        .cwd({ path: '/tmp/' + targetRepoName, root: false })
+        .diff();
+
+    if (changes === '') {
+      console.debug("there is nothing to commit, exiting...");
+      return { success: true };
+    }
+
+    console.debug("found changes to commit, pushing out the changes ...");
     await simpleGit()
-        .cwd({ path: '/tmp/' + remoteRepoLocalDir, root: false })
+        .cwd({ path: '/tmp/' + targetRepoName, root: false })
         .add(modules)
-        .commit('update protobuf files at ' + new Date().toLocaleString())
-        .push(['origin', currentBranchName.current]);
+        .commit('update protobuf files at ' + new Date().toLocaleString());
+    console.debug("changes are successfully committed");
+
+    if (currentBranch.current !== 'main' && currentBranch.current !== 'master') {
+      await simpleGit()
+          .cwd({path: '/tmp/' + targetRepoName, root: false})
+          .push(['origin', currentBranch.current]);
+      console.debug("changes are successfully pushed out to branch " + currentBranch.current);
+    }
 
     // Return success if the function completes without errors
     return { success: true };
