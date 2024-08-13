@@ -74,19 +74,23 @@ async function runExecutor({ dryRun, gitRepo, exportFrom, modules, targetProtoDi
                 resolve();
             }
         }));
+        console.debug("found changes to commit, pushing out the changes ...");
+        await (0, simple_git_1.simpleGit)()
+            .cwd({ path: '/tmp/' + targetRepoName, root: false })
+            .add(modules);
         const changes = await (0, simple_git_1.simpleGit)()
             .cwd({ path: '/tmp/' + targetRepoName, root: false })
-            .diff();
+            .diff(['HEAD']);
         if (changes === '') {
             console.debug("there is nothing to commit, exiting...");
             return { success: true };
         }
-        console.debug("found changes to commit, pushing out the changes ...");
-        await (0, simple_git_1.simpleGit)()
-            .cwd({ path: '/tmp/' + targetRepoName, root: false })
-            .add(modules)
-            .commit('update protobuf files at ' + new Date().toLocaleString());
-        console.debug("changes are successfully committed");
+        else {
+            await (0, simple_git_1.simpleGit)()
+                .cwd({ path: '/tmp/' + targetRepoName, root: false })
+                .commit('update protobuf files at ' + new Date().toLocaleString());
+            console.debug("changes are successfully committed");
+        }
         if (currentBranch.current !== 'main' && currentBranch.current !== 'master') {
             await (0, simple_git_1.simpleGit)()
                 .cwd({ path: '/tmp/' + targetRepoName, root: false })
